@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>differ</title>
+    </head>
+    <body>
+        <form name="frm">
+            元のテキスト
+            <textarea name="prev" rows="10"></textarea>
+            変更後のテキスト
+            <textarea name="curr" rows="10"></textarea>
+        </form>
+        <input type="submit" id="btn" value="実行">
+        <div id="result"></div>
+    </body>
+    <script>
+        // https://qiita.com/convto/items/e05d8147d9808a27b8ff
+        function differ() {
+            var prev = document.frm.prev.value;
+            var curr = document.frm.curr.value;
+            var div = document.getElementById('result');
+            div.innerHTML = distance(prev, curr);
+        }
+
+        function distance(A, B) {
+            var N = A.length;
+            var M = B.length;
+
+            // N >= M が前提
+            if (N < M) {
+                return distance(B, A);
+            }
+
+            var delta = N - M;
+
+            return delta;
+        }
+        
+        document.getElementById('btn').addEventListener("click", differ);
+    </script>
+</html>
