@@ -21,36 +21,91 @@
             var prev = document.frm.prev.value;
             var curr = document.frm.curr.value;
             var div = document.getElementById('result');
-            div.innerHTML = distance(prev, curr);
+            var result = onp(prev, curr);
+            console.log(result);
+            var html = "distance: " + result[0] + "\n";
+            div.innerHTML = html;
+
+            var seek = [0, 0]; // index of [prev, curr]
+
+            if (prev.length >= curr.length) {
+                for (i = 0; i < result[1].length; i++) {
+                    while (seek[1] < result[1][i][1]) {
+                        html += '+';
+                        html += curr[seek[1]];
+                        seek[1]++;
+                    }
+                    while (seek[0] < result[1][i][0]) {
+                        html += '-';
+                        html += prev[seek[0]];
+                        seek[0]++;
+                    }
+                    html += ' ';
+                    html += prev[result[1][i][0]];
+                    seek[0]++;
+                    seek[1]++;
+                    html += ' ';
+                }
+            } else {
+                for (i = 0; i < result[1].length; i++) {
+                    while (seek[1] < result[1][i][0]) {
+                        html += '+';
+                        html += curr[seek[1]];
+                        seek[1]++;
+                    }
+                    while (seek[0] < result[1][i][1]) {
+                        html += '-';
+                        html += prev[seek[0]];
+                        seek[0]++;
+                    }
+                    html += ' ';
+                    html += prev[result[1][i][1]];
+                    seek[0]++;
+                    seek[1]++;
+                    html += ' ';
+                }
+            }
+            while (seek[1] < curr.length) {
+                html += '+';
+                html += curr[seek[1]];
+                seek[1]++;
+            }
+            while (seek[0] < prev.length) {
+                html += '-';
+                html += prev[seek[0]];
+                seek[0]++;
+            }
+            console.log(html);
+            div.innerHTML = html;
         }
 
-        function distance(A, B) {
+
+        function onp(A, B) {
             // console.log("A: %s, B: %s", A, B);
             var N = A.length;
             var M = B.length;
 
             // N >= M が前提
             if (N < M) {
-                return distance(B, A);
+                return onp(B, A);
             }
 
             var delta = N - M;
 
-            for (var p = 0; p <= M; p++) {
+            for (var p = 0;; p++) {
                 // p(削除の回数)を増やしながら探索する
-                if (fp(A, B, delta, p) == N) {
-                    return delta + 2 * p;
+                var result = fp(A, B, delta, p);
+                if (result[0] == N) {
+                    return [delta + 2 * p, result[1]];
                 }
             }
-
-            return -1;
         }
 
         function fp(A, B, k, p) {
             var delta = A.length - B.length;
             if (!(-p <= k && k <= p + delta)) {
                 // 範囲外の時ありえない数字を返しておく
-                return -Infinity;
+                return [-Infinity, []];
             }
 
             if (k == 0 && p == 0) {
@@ -59,13 +114,40 @@
                 return result;
             }
 
-            var result = 0;
+            var result = [];
             if (k == delta) {
-                result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p) + 1, fp(A, B, k + 1, p), k]));
+                var a = fp(A, B, k - 1, p);
+                var b = fp(A, B, k + 1, p);
+                if (a[0] + 1 > b[0]) {
+                    result = goDiagonally(A, B, k, a[0] + 1);
+                    result[1] = a[1].concat(result[1]);
+                } else {
+                    result = goDiagonally(A, B, k, b[0]);
+                    result[1] = b[1].concat(result[1]);
+                }
+                // result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p)[0] + 1, fp(A, B, k + 1, p)[0]]));
             } else if (k > delta) {
-                result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p - 1) + 1, fp(A, B, k + 1, p), k]));
+                var a = fp(A, B, k - 1, p - 1);
+                var b = fp(A, B, k + 1, p);
+                if (a[0] + 1 > b[0]) {
+                    result = goDiagonally(A, B, k, a[0] + 1);
+                    result[1] = a[1].concat(result[1]);
+                } else {
+                    result = goDiagonally(A, B, k, b[0]);
+                    result[1] = b[1].concat(result[1]);
+                }
+                // result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p - 1)[0] + 1, fp(A, B, k + 1, p)[0]]));
             } else {
-                result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p) + 1, fp(A, B, k + 1, p - 1), k]));
+                var a = fp(A, B, k - 1, p);
+                var b = fp(A, B, k + 1, p - 1);
+                if (a[0] + 1 > b[0]) {
+                    result = goDiagonally(A, B, k, a[0] + 1);
+                    result[1] = a[1].concat(result[1]);
+                } else {
+                    result = goDiagonally(A, B, k, b[0]);
+                    result[1] = b[1].concat(result[1]);
+                }
+                // result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p)[0] + 1, fp(A, B, k + 1, p - 1)[0]]));
             }
             // console.log("fp(%s, %s, %i, %i) = %i", A, B, k, p, result);
             return result;
@@ -73,11 +155,13 @@
 
         function goDiagonally(A, B, k, y) {
             var x = y - k;
+            var common = [];
             while (y < A.length && x < B.length && A[y] == B[x]) {
+                common.push([y, x]);
                 x++;
                 y++;
             }
-            return y;
+            return [y, common];
         }
 
         function max(list) {
