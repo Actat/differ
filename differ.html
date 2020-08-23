@@ -22,63 +22,77 @@
             var curr = document.frm.curr.value;
             var div = document.getElementById('result');
             var result = onp(prev, curr);
-            console.log(result);
-            var html = "distance: " + result[0] + "\n";
-            div.innerHTML = html;
+            div.innerHTML = formatDiff(prev, curr, result);
+        }
 
-            var seek = [0, 0]; // index of [prev, curr]
+        function formatDiff(prev, curr, result) {
+            var index = [0, 0]; // [prev, curr]
+            var string = "distance: " + result[0] + "<br>" + "\n";
 
             if (prev.length >= curr.length) {
                 for (i = 0; i < result[1].length; i++) {
-                    while (seek[1] < result[1][i][1]) {
-                        html += '+';
-                        html += curr[seek[1]];
-                        seek[1]++;
+                    if (index[1] < result[1][i][1]) {
+                        string += ' +'
+                        while (index[1] < result[1][i][1]) {
+                            string += curr[index[1]];
+                            index[1]++;
+                        }
+                        string += ' ';
                     }
-                    while (seek[0] < result[1][i][0]) {
-                        html += '-';
-                        html += prev[seek[0]];
-                        seek[0]++;
+                    if (index[0] < result[1][i][0]) {
+                        string += ' -'
+                        while (index[0] < result[1][i][0]) {
+                            string += prev[index[0]];
+                            index[0]++;
+                        }
+                        string += ' ';
                     }
-                    html += ' ';
-                    html += prev[result[1][i][0]];
-                    seek[0]++;
-                    seek[1]++;
-                    html += ' ';
+                    string += prev[result[1][i][0]];
+                    index[0]++;
+                    index[1]++;
                 }
             } else {
                 for (i = 0; i < result[1].length; i++) {
-                    while (seek[1] < result[1][i][0]) {
-                        html += '+';
-                        html += curr[seek[1]];
-                        seek[1]++;
+                    if (index[1] < result[1][i][0]) {
+                        string += ' +';
+                        while (index[1] < result[1][i][0]) {
+                            string += curr[index[1]];
+                            index[1]++;
+                        }
+                        string += ' ';
                     }
-                    while (seek[0] < result[1][i][1]) {
-                        html += '-';
-                        html += prev[seek[0]];
-                        seek[0]++;
+                    if (index[0] < result[1][i][1]) {
+                        string += ' -';
+                        while (index[0] < result[1][i][1]) {
+                            string += prev[index[0]];
+                            index[0]++;
+                        }
+                        string += ' ';
                     }
-                    html += ' ';
-                    html += prev[result[1][i][1]];
-                    seek[0]++;
-                    seek[1]++;
-                    html += ' ';
+                    string += prev[result[1][i][1]];
+                    index[0]++;
+                    index[1]++;
                 }
             }
-            while (seek[1] < curr.length) {
-                html += '+';
-                html += curr[seek[1]];
-                seek[1]++;
+            if (index[1] < curr.length) {
+                string += ' +';
+                while (index[1] < curr.length) {
+                    string += curr[index[1]];
+                    index[1]++;
+                }
+                string += ' ';
             }
-            while (seek[0] < prev.length) {
-                html += '-';
-                html += prev[seek[0]];
-                seek[0]++;
+            if (index[0] < prev.length) {
+                string += ' -';
+                while (index[0] < prev.length) {
+                    string += prev[index[0]];
+                    index[0]++;
+                }
+                string += ' ';
             }
-            console.log(html);
-            div.innerHTML = html;
+            console.log(string);
+            return string;
         }
-
 
         function onp(A, B) {
             // console.log("A: %s, B: %s", A, B);
