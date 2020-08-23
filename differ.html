@@ -125,7 +125,6 @@
                     result = goDiagonally(A, B, k, b[0]);
                     result[1] = b[1].concat(result[1]);
                 }
-                // result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p)[0] + 1, fp(A, B, k + 1, p)[0]]));
             } else if (k > delta) {
                 var a = fp(A, B, k - 1, p - 1);
                 var b = fp(A, B, k + 1, p);
@@ -136,7 +135,6 @@
                     result = goDiagonally(A, B, k, b[0]);
                     result[1] = b[1].concat(result[1]);
                 }
-                // result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p - 1)[0] + 1, fp(A, B, k + 1, p)[0]]));
             } else {
                 var a = fp(A, B, k - 1, p);
                 var b = fp(A, B, k + 1, p - 1);
@@ -147,7 +145,6 @@
                     result = goDiagonally(A, B, k, b[0]);
                     result[1] = b[1].concat(result[1]);
                 }
-                // result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p)[0] + 1, fp(A, B, k + 1, p - 1)[0]]));
             }
             // console.log("fp(%s, %s, %i, %i) = %i", A, B, k, p, result);
             return result;
@@ -156,7 +153,7 @@
         function goDiagonally(A, B, k, y) {
             var x = y - k;
             var common = [];
-            while (y < A.length && x < B.length && A[y] == B[x]) {
+            while (0 <= y && y < A.length && 0 <= x && x < B.length && A[y] == B[x]) {
                 common.push([y, x]);
                 x++;
                 y++;
