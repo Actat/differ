@@ -16,6 +16,7 @@
     </body>
     <script>
         // https://qiita.com/convto/items/e05d8147d9808a27b8ff
+        // https://doi.org/10.1016/0020-0190(90)90035-V
         function differ() {
             var prev = document.frm.prev.value;
             var curr = document.frm.curr.value;
@@ -24,6 +25,7 @@
         }
 
         function distance(A, B) {
+            // console.log("A: %s, B: %s", A, B);
             var N = A.length;
             var M = B.length;
 
@@ -34,7 +36,58 @@
 
             var delta = N - M;
 
-            return delta;
+            for (var p = 0; p <= M; p++) {
+                // p(削除の回数)を増やしながら探索する
+                if (fp(A, B, delta, p) == N) {
+                    return delta + 2 * p;
+                }
+            }
+
+            return -1;
+        }
+
+        function fp(A, B, k, p) {
+            var delta = A.length - B.length;
+            if (!(-p <= k && k <= p + delta)) {
+                // 範囲外の時ありえない数字を返しておく
+                return -Infinity;
+            }
+
+            if (k == 0 && p == 0) {
+                var result = goDiagonally(A, B, k, p);
+                // console.log("fp(%s, %s, %i, %i) = %i", A, B, k, p, result);
+                return result;
+            }
+
+            var result = 0;
+            if (k == delta) {
+                result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p) + 1, fp(A, B, k + 1, p), k]));
+            } else if (k > delta) {
+                result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p - 1) + 1, fp(A, B, k + 1, p), k]));
+            } else {
+                result = goDiagonally(A, B, k, max([fp(A, B, k - 1, p) + 1, fp(A, B, k + 1, p - 1), k]));
+            }
+            // console.log("fp(%s, %s, %i, %i) = %i", A, B, k, p, result);
+            return result;
+        }
+
+        function goDiagonally(A, B, k, y) {
+            var x = y - k;
+            while (y < A.length && x < B.length && A[y] == B[x]) {
+                x++;
+                y++;
+            }
+            return y;
+        }
+
+        function max(list) {
+            var index = 0;
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] > list[index]) {
+                    index = i;
+                }
+            }
+            return list[index];
         }
         
         document.getElementById('btn').addEventListener("click", differ);
