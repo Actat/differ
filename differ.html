@@ -103,14 +103,15 @@
 
         function fp(A, B, k, p) {
             var delta = A.length - B.length;
-            if (!(-p <= k && k <= p + delta)) {
+            if (!(-p <= k && k <= p + delta) || !(0 <= p && p <= B.length)) {
                 // 範囲外の時ありえない数字を返しておく
-                return [-Infinity, []];
+                result = [-Infinity, []];
+                console.log("fp(A, B, " + k + ", " + p + ") = " + result);
+                return result;
             }
 
             if (k == 0 && p == 0) {
                 var result = goDiagonally(A, B, k, p);
-                // console.log("fp(%s, %s, %i, %i) = %i", A, B, k, p, result);
                 return result;
             }
 
@@ -146,13 +147,17 @@
                     result[1] = b[1].concat(result[1]);
                 }
             }
-            // console.log("fp(%s, %s, %i, %i) = %i", A, B, k, p, result);
+            console.log("fp(A, B, " + k + ", " + p + ") = " + result);
             return result;
         }
 
         function goDiagonally(A, B, k, y) {
             var x = y - k;
             var common = [];
+
+            if (x < 0 || x > B.length || y < 0 || y > A.length) {
+                return [-Infinity, common];
+            }
             while (0 <= y && y < A.length && 0 <= x && x < B.length && A[y] == B[x]) {
                 common.push([y, x]);
                 x++;
