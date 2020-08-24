@@ -29,50 +29,26 @@
             var index = [0, 0]; // [prev, curr]
             var string = "distance: " + result[0] + "<br>" + "\n";
 
-            if (prev.length >= curr.length) {
-                for (i = 0; i < result[1].length; i++) {
-                    if (index[1] < result[1][i][1]) {
-                        string += ' +'
-                        while (index[1] < result[1][i][1]) {
-                            string += curr[index[1]];
-                            index[1]++;
-                        }
-                        string += ' ';
+            for (var i = 0; i < result[1].length; i++) {
+                if (index[1] < result[1][i][1]) {
+                    string += ' +';
+                    while (index[1] < result[1][i][1]) {
+                        string += curr[index[1]];
+                        index[1]++;
                     }
-                    if (index[0] < result[1][i][0]) {
-                        string += ' -'
-                        while (index[0] < result[1][i][0]) {
-                            string += prev[index[0]];
-                            index[0]++;
-                        }
-                        string += ' ';
-                    }
-                    string += prev[result[1][i][0]];
-                    index[0]++;
-                    index[1]++;
+                    string += ' ';
                 }
-            } else {
-                for (i = 0; i < result[1].length; i++) {
-                    if (index[1] < result[1][i][0]) {
-                        string += ' +';
-                        while (index[1] < result[1][i][0]) {
-                            string += curr[index[1]];
-                            index[1]++;
-                        }
-                        string += ' ';
+                if (index[0] < result[1][i][0]) {
+                    string += ' -';
+                    while (index[0] < result[1][i][0]) {
+                        string += prev[index[0]];
+                        index[0]++;
                     }
-                    if (index[0] < result[1][i][1]) {
-                        string += ' -';
-                        while (index[0] < result[1][i][1]) {
-                            string += prev[index[0]];
-                            index[0]++;
-                        }
-                        string += ' ';
-                    }
-                    string += prev[result[1][i][1]];
-                    index[0]++;
-                    index[1]++;
+                    string += ' ';
                 }
+                string += prev[result[1][i][0]];
+                index[0]++;
+                index[1]++;
             }
             if (index[1] < curr.length) {
                 string += ' +';
@@ -99,7 +75,13 @@
 
             // N >= M が前提
             if (N < M) {
-                return onp(B, A);
+                var result = onp(B, A);
+                for (var i = 0; i < result[1].length; i++) {
+                    var tmp = result[1][i][0];
+                    result[1][i][0] = result[1][i][1];
+                    result[1][i][1] = tmp;
+                }
+                return result;
             }
 
             var delta = N - M;
