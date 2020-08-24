@@ -90,12 +90,10 @@
                 }
                 string += ' ';
             }
-            console.log(string);
             return string;
         }
 
         function onp(A, B) {
-            // console.log("A: %s, B: %s", A, B);
             var N = A.length;
             var M = B.length;
 
@@ -105,64 +103,55 @@
             }
 
             var delta = N - M;
+            var fp = []; // -M <= k <= N が 1 <= index <= N + M + 1 に対応 (index 0 と N + M + 2 は探索時にはみ出る両端)
+            var offset = M + 1;
+            for (var i = 0; i < M + N + 3; i++) {
+                fp.push([-1, []]);
+            }
+            fp[0 + offset][0] = 0;
 
             for (var p = 0;; p++) {
                 // p(削除の回数)を増やしながら探索する
-                var result = fp(A, B, delta, p);
-                if (result[0] == N) {
-                    return [delta + 2 * p, result[1]];
+                for (var k = -p ; k < delta; k++) {
+                    var tmp;
+                    if (fp[k - 1 + offset][0] + 1 > fp[k + 1 + offset][0]) {
+                        tmp = fp[k - 1 + offset];
+                        tmp[0]++;
+                    } else {
+                        tmp = fp[k + 1 + offset];
+                    }
+                    var result = goDiagonally(A, B, k, tmp[0]);
+                    fp[k + offset][0] = result[0];
+                    fp[k + offset][1] = tmp[1].concat(result[1]);
+                }
+                for (var k = p + delta ; k > delta; k--) {
+                    var tmp;
+                    if (fp[k - 1 + offset][0] + 1 > fp[k + 1 + offset][0]) {
+                        tmp = fp[k - 1 + offset];
+                        tmp[0]++;
+                    } else {
+                        tmp = fp[k + 1 + offset];
+                    }
+                    var result = goDiagonally(A, B, k, tmp[0]);
+                    fp[k + offset][0] = result[0];
+                    fp[k + offset][1] = tmp[1].concat(result[1]);
+                }
+                {
+                    var tmp
+                    if (fp[delta - 1 + offset][0] + 1 > fp[delta + 1 + offset][0]) {
+                        tmp = fp[delta - 1 + offset];
+                        tmp[0]++;
+                    } else {
+                        tmp = fp[delta + 1 + offset];
+                    }
+                    var result = goDiagonally(A, B, k, tmp[0]);
+                    fp[delta + offset][0] = result[0];
+                    fp[delta + offset][1] = tmp[1].concat(result[1]);
+                }
+                if (fp[delta + offset][0] == N) {
+                    return [delta + 2 * p, fp[delta + offset][1]];
                 }
             }
-        }
-
-        function fp(A, B, k, p) {
-            var delta = A.length - B.length;
-            if (!(-p <= k && k <= p + delta) || !(0 <= p && p <= B.length)) {
-                // 範囲外の時ありえない数字を返しておく
-                result = [-Infinity, []];
-                console.log("fp(A, B, " + k + ", " + p + ") = " + result);
-                return result;
-            }
-
-            if (k == 0 && p == 0) {
-                var result = goDiagonally(A, B, k, p);
-                return result;
-            }
-
-            var result = [];
-            if (k == delta) {
-                var a = fp(A, B, k - 1, p);
-                var b = fp(A, B, k + 1, p);
-                if (a[0] + 1 > b[0]) {
-                    result = goDiagonally(A, B, k, a[0] + 1);
-                    result[1] = a[1].concat(result[1]);
-                } else {
-                    result = goDiagonally(A, B, k, b[0]);
-                    result[1] = b[1].concat(result[1]);
-                }
-            } else if (k > delta) {
-                var a = fp(A, B, k - 1, p - 1);
-                var b = fp(A, B, k + 1, p);
-                if (a[0] + 1 > b[0]) {
-                    result = goDiagonally(A, B, k, a[0] + 1);
-                    result[1] = a[1].concat(result[1]);
-                } else {
-                    result = goDiagonally(A, B, k, b[0]);
-                    result[1] = b[1].concat(result[1]);
-                }
-            } else {
-                var a = fp(A, B, k - 1, p);
-                var b = fp(A, B, k + 1, p - 1);
-                if (a[0] + 1 > b[0]) {
-                    result = goDiagonally(A, B, k, a[0] + 1);
-                    result[1] = a[1].concat(result[1]);
-                } else {
-                    result = goDiagonally(A, B, k, b[0]);
-                    result[1] = b[1].concat(result[1]);
-                }
-            }
-            console.log("fp(A, B, " + k + ", " + p + ") = " + result);
-            return result;
         }
 
         function goDiagonally(A, B, k, y) {
