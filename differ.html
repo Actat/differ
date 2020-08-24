@@ -115,10 +115,10 @@
                 for (var k = -p; k < delta; k++) {
                     var tmp;
                     if (fp[k - 1 + offset][0] + 1 > fp[k + 1 + offset][0]) {
-                        tmp = fp[k - 1 + offset];
+                        tmp = fp[k - 1 + offset].concat();
                         tmp[0]++;
                     } else {
-                        tmp = fp[k + 1 + offset];
+                        tmp = fp[k + 1 + offset].concat();
                     }
                     var result = goDiagonally(A, B, k, tmp[0]);
                     fp[k + offset][0] = result[0];
@@ -127,10 +127,10 @@
                 for (var k = p + delta; k > delta; k--) {
                     var tmp;
                     if (fp[k - 1 + offset][0] + 1 > fp[k + 1 + offset][0]) {
-                        tmp = fp[k - 1 + offset];
+                        tmp = fp[k - 1 + offset].concat();
                         tmp[0]++;
                     } else {
-                        tmp = fp[k + 1 + offset];
+                        tmp = fp[k + 1 + offset].concat();
                     }
                     var result = goDiagonally(A, B, k, tmp[0]);
                     fp[k + offset][0] = result[0];
@@ -139,10 +139,10 @@
                 {
                     var tmp
                     if (fp[delta - 1 + offset][0] + 1 > fp[delta + 1 + offset][0]) {
-                        tmp = fp[delta - 1 + offset];
+                        tmp = fp[delta - 1 + offset].concat();
                         tmp[0]++;
                     } else {
-                        tmp = fp[delta + 1 + offset];
+                        tmp = fp[delta + 1 + offset].concat();
                     }
                     var result = goDiagonally(A, B, k, tmp[0]);
                     fp[delta + offset][0] = result[0];
@@ -157,11 +157,9 @@
         function goDiagonally(A, B, k, y) {
             var x = y - k;
             var common = [];
-
-            if (x < 0 || x > B.length || y < 0 || y > A.length) {
-                return [-Infinity, common];
+            if (y < A.length && x < B.length) {
             }
-            while (0 <= y && y < A.length && 0 <= x && x < B.length && A[y] == B[x]) {
+            while (y < A.length && x < B.length && A[y] == B[x]) {
                 common.push([y, x]);
                 x++;
                 y++;
