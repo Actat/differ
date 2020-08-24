@@ -112,7 +112,7 @@
 
             for (var p = 0;; p++) {
                 // p(削除の回数)を増やしながら探索する
-                for (var k = -p ; k < delta; k++) {
+                for (var k = -p; k < delta; k++) {
                     var tmp;
                     if (fp[k - 1 + offset][0] + 1 > fp[k + 1 + offset][0]) {
                         tmp = fp[k - 1 + offset];
@@ -124,7 +124,7 @@
                     fp[k + offset][0] = result[0];
                     fp[k + offset][1] = tmp[1].concat(result[1]);
                 }
-                for (var k = p + delta ; k > delta; k--) {
+                for (var k = p + delta; k > delta; k--) {
                     var tmp;
                     if (fp[k - 1 + offset][0] + 1 > fp[k + 1 + offset][0]) {
                         tmp = fp[k - 1 + offset];
