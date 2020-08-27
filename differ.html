@@ -32,7 +32,10 @@
             var string = '';
             for (var i = 0; i < result[1].length; i++) {
                 if (index[1] < result[1][i][1]) {
-                    string += '<br>\n+ <b>';
+                    if (string.slice(-1) != '\n') {
+                        string += '<br>\n';
+                    }
+                    string += '+ <b>';
                     while (index[1] < result[1][i][1]) {
                         string += curr[index[1]];
                         index[1]++;
@@ -40,7 +43,10 @@
                     string += '</b><br>\n';
                 }
                 if (index[0] < result[1][i][0]) {
-                    string += '<br>\n- <strike>';
+                    if (string.slice(-1) != '\n') {
+                        string += '<br>\n';
+                    }
+                    string += '- <strike>';
                     while (index[0] < result[1][i][0]) {
                         string += prev[index[0]];
                         index[0]++;
@@ -48,11 +54,17 @@
                     string += '</strike><br>\n';
                 }
                 string += prev[result[1][i][0]];
+                if (prev[result[1][i][0]] == '\n') {
+                    string += '<br>';
+                }
                 index[0]++;
                 index[1]++;
             }
             if (index[1] < curr.length) {
-                string += '<br>\n+ <b>';
+                if (string.slice(-1) != '\n') {
+                    string += '<br>\n';
+                }
+                string += '+ <b>';
                 while (index[1] < curr.length) {
                     string += curr[index[1]];
                     index[1]++;
@@ -60,7 +72,10 @@
                 string += '</b><br>\n';
             }
             if (index[0] < prev.length) {
-                string += '<br>\n- <strike>';
+                if (string.slice(-1) != '\n') {
+                    string += '<br>\n';
+                }
+                string += '- <strike>';
                 while (index[0] < prev.length) {
                     string += prev[index[0]];
                     index[0]++;
